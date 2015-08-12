@@ -1,0 +1,43 @@
+#ifndef _ame_
+#define _ame_
+
+#include <iostream>
+#include<fonction.h>
+
+
+using namespace std;
+
+class Tcerveau;
+class Tpositron;
+
+class Tame
+{
+public:
+
+Tcerveau *cerveau;
+int *pointeurpoid;
+Tpositron **pointeurentre;
+int positionpositron;
+int *pointeurpentre;
+int meilleurliaison;
+
+
+void action(int temps_restant);
+void init(void);
+void changerdepositron(void);
+void save(ofstream &fichier);
+void load(ifstream &fichier);
+
+
+static int initdelaymax[2],initmaxnonamelioration[2],initvchangement[2];
+static int minitdelaymax[2],minitmaxnonamelioration[2],minitvchangement[2];
+
+
+int meilleuramelioration,dernierebouffe;
+int delaymax,maxnonamelioration,vchangement;
+int delay,amelioration,nonamelioration,meilleurpoid;
+bool modifie_liaison;
+
+};
+
+#endif

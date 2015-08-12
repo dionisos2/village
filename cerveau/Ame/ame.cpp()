@@ -1,0 +1,157 @@
+#include "ame.h"
+#include "G:\programmation\c++\village\cerveau\cerveau.h"
+#include<fonction.h>
+
+void Tame::save(ofstream &fichier)
+{
+	fichier<<"ame"<<endl;
+	fichier<<this->delaymax<<endl;
+	fichier<<this->maxnonamelioration<<endl;
+	fichier<<this->vchangement<<endl;
+
+}
+
+void Tame::load(ifstream &fichier)
+{
+string ligne;
+getline(fichier,ligne);
+this->delaymax=strtoint(ligne);
+getline(fichier,ligne);
+this->maxnonamelioration=strtoint(ligne);
+getline(fichier,ligne);
+this->vchangement=strtoint(ligne);
+}
+
+void Tame::init()
+{
+	delaymax=randomentre(initdelaymax);
+	maxnonamelioration=randomentre(initmaxnonamelioration);
+	vchangement=randomentre(initvchangement);
+	modifie_liaison=false;
+	changerdepositron();
+	meilleuramelioration=-50000;
+	dernierebouffe=cerveau->bouffe;
+	delay=0;
+};
+
+void Tame::action(int temps_restant)
+{
+	delay++;
+
+
+	int position;
+	
+if (temps_restant>=0)
+{	
+
+	if(modifie_liaison==false)
+	{
+		if(delay>=delaymax)
+		{	
+			amelioration=cerveau->bouffe-dernierebouffe;
+			if(meilleuramelioration>amelioration)
+			{
+				nonamelioration++;
+			}
+			else
+			{
+				nonamelioration=0;
+				meilleuramelioration=amelioration;
+				meilleurpoid=*(pointeurpoid);
+			}
+		
+			if(nonamelioration>=maxnonamelioration)
+			{
+			
+				*(pointeurpoid)=meilleurpoid;
+				changerdepositron();
+
+			}
+			else
+			{			
+				*(pointeurpoid)+=randomentre(-(vchangement/(cerveau->bouffe+30)),(vchangement/(cerveau->bouffe+30)));/*300 pour eviter les changement enorme quand pu de bouffe et les divition par 0 en meme temp*/
+			}
+		
+			delay=0;
+			dernierebouffe=cerveau->bouffe;
+		}
+
+
+	}
+	else
+	{
+
+		if(delay>=delaymax)
+		{	
+			amelioration=cerveau->bouffe-dernierebouffe;
+			if(meilleuramelioration>amelioration)
+			{
+				nonamelioration++;
+			}
+			else
+			{
+				nonamelioration=0;
+				meilleuramelioration=amelioration;
+				meilleurliaison=positionpositron;
+			}
+		
+			if(nonamelioration>=maxnonamelioration)
+			{
+			
+				positionpositron=meilleurliaison;
+				*(pointeurentre)=&(cerveau->Tabpositrons.at(positionpositron));
+				*(pointeurpentre)=positionpositron;
+				changerdepositron();
+			}
+			else
+			{			
+				position=randomentre(0,cerveau->Tabpositrons.size()-1);
+
+				*(pointeurentre)=&cerveau->Tabpositrons.at(position);
+				*(pointeurpentre)=position;
+			}
+		
+			delay=0;
+			dernierebouffe=cerveau->bouffe;
+		}
+	}
+}
+else
+{
+	if(modifie_liaison==false)
+	{
+		*(pointeurpoid)=meilleurpoid;
+	}
+	else
+	{
+		positionpositron=meilleurliaison;
+		*(pointeurentre)=&(cerveau->Tabpositrons.at(positionpositron));
+		*(pointeurpentre)=positionpositron;
+	}
+}
+
+};
+
+void Tame::changerdepositron()
+{
+	nonamelioration=0;
+	static Tpositron *positron;
+	positron=&(cerveau->Tabpositrons.at(randomentre(0,cerveau->Tabpositrons.size()-1)));
+	
+	modifie_liaison=!modifie_liaison;
+	cout<<"prout:"<<modifie_liaison<<endl;
+	if (modifie_liaison==false)
+	{
+		pointeurpoid=&(positron->tabpoid.at(randomentre(0,positron->tabpoid.size()-1)));//prend l'adresse d'un poid d'une entre au hazarb dans un positron au hazard du robot
+		meilleurpoid=*(pointeurpoid);
+	}
+	else
+	{
+		positionpositron=randomentre(0,positron->tabpentre.size()-1);
+		pointeurentre=&(positron->tabentre.at(positionpositron));
+		pointeurpentre=&(positron->tabpentre.at(positionpositron));
+
+		meilleurliaison=positionpositron;
+	}
+	
+};

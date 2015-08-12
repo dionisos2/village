@@ -1,0 +1,5 @@
+# Microsoft Developer Studio Generated Dependency File, included by cerveau.mak
+
+.\positron\positron.cpp : \
+	".\positron\positron.h"\
+	
